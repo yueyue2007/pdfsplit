@@ -7,10 +7,11 @@ require 'builder'
 def split_every_pages(pdf_file) 
   commstr = "pdfseparate #{pdf_file}  #{File.dirname(pdf_file)+"/"+File.basename(pdf_file,".pdf")}-%d.pdf "
   #puts commstr
-  unless system commstr
-    puts "pdfseparate failed."
-    exit
-  end
+  # unless system commstr
+  #   puts "pdfseparate failed."
+  #   exit
+  # end
+  system(commstr)
 end
 
 def clear_every_pages(pdf_file)
@@ -130,11 +131,11 @@ clear_every_pages(tree['filename'])
 
 builder = Builder::XmlMarkup.new
 builder.instruct! :xml, :version=>"1.0", :encoding=>"UTF-8"
-builder.declare! :DOCTYPE,:issues,:PUBLIC,"-//PKP//OJS Articles and Issues XML//EN","http://pkp.sfu.ca/ojs/dtds/2.4/native.dtd"
+builder.declare! :DOCTYPE,:issues,:SYSTEM,"native.dtd"
 xml = builder.issues do |is|
   is.issue(:published=>"true",:identification=>"title",:current=>"false") do |issue|
     issue.title("#{tree['title']}",:locale=>"zh_CN")
-    issue.access_date("2013-02-01")
+    issue.access_date("02-01-2013")
     issue.volume("#{tree['volume']}")
     issue.number("#{tree['number']}")
     issue.year("#{tree['year']}")
@@ -149,9 +150,9 @@ xml = builder.issues do |is|
             article_xml.author(:primary_contact=>"true") do |author|
               author.firstname("#{article_yaml['author_CN']}")
               author.lastname("#{article_yaml['author_EN']}")
-              author.email("#{article_yaml['email']}")
+              author.email("#{article_yaml['email']}"+" ")
             end
-            article_xml.date_published("")
+            article_xml.date_published("02-01-2013")
             article_xml.galley(:locale=>"zh_CN") do |galley|
               galley.label("PDF")
               galley.file  do |file|
@@ -166,11 +167,18 @@ xml = builder.issues do |is|
 end
 
 
-
-File.open(File.dirname(tree['filename'])+"/"+File.basename(tree['filename'],".pdf")+".xml","w") {|f| f<<xml}
+xml_file = File.dirname(tree['filename'])+"/"+File.basename(tree['filename'],".pdf")+".xml"
+puts "xml_file= "+xml_file
+File.open(xml_file,"w") {|f| f<<xml}
 
 
 # 调用php，导入刊期和文章
+phpcommand = "php  /var/www/ojs/tools/importExport.php NativeImportExportPlugin import "
+phpcommand += xml_file
+phpcommand += " "+"HXLT "+" admin"
+
+puts phpcommand
+#system(phpcommand)
 
 # delete all pdf files of every article
 

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE issues SYSTEM "native.dtd">
+<!--
+  * plugins/importexport/native/sample.xml
+  *
+  * Copyright (c) 2003-2013 John Willinsky
+  * Distributed under the GNU GPL v2. For full terms see the file docs/COPYING.
+  *
+  * Sample import document for the OJS 2.x native XML import/export format.
+  *
+  -->
+<issues>
+	<issue published="true" current="false" identification="title">
+		<title locale="zh_CN">2013年第4期</title>
+		<access_date>02-01-2013</access_date>
+		<section>
+			<title locale="zh_CN">马克思主义lilun</title>
+			<abbrev locale="zh_CN">mkszy</abbrev>
+			<article>
+				<title locale="zh_CN">马克思和恩格斯</title>
+				<abstract locale="zh_CN">老马和老恩的。。。</abstract>
+				
+				<author primary_contact="true">
+					<firstname>Jane</firstname>
+					<lastname>Doe</lastname>
+					<email>JaneDoe@sample.test</email>
+					<biography locale="zh_CN">Jane Doe's  Bio statement...</biography>
+				</author>
+				<date_published>2013-06-05</date_published>
+				<htmlgalley locale="zh_CN">
+					<label>HTML</label>
+					<file>
+						<href src="/home/xinyue/2010/2010-1-1.html" mime_type="text/html"/>
+					</file>	
+					<image>
+           			 <href mime_type="application/jpeg" src="/home/xinyue/2010/icon.jpg"/>
+         		 </image>				
+				</htmlgalley>
+				<galley locale="zh_CN">
+					<label>PDF</label>
+					<file>
+						<href src="/home/xinyue/2010/2010-1-1.pdf" mime_type="application/pdf"/>
+					</file>
+				</galley>
+			</article>
+		</section>
+	</issue>
+</issues>
