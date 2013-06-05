@@ -5,6 +5,8 @@ volume: 26
 number: 2
 year: 2013
 amend: 0
+journal_path: "HXLT"
+username:  "admin"
 sections:
   -
     title: "马克思主义理论与实践"

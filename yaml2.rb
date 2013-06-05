@@ -5,12 +5,7 @@ require 'yaml'
 require 'builder'
 
 def split_every_pages(pdf_file) 
-  commstr = "pdfseparate #{pdf_file}  #{File.dirname(pdf_file)+"/"+File.basename(pdf_file,".pdf")}-%d.pdf "
-  #puts commstr
-  # unless system commstr
-  #   puts "pdfseparate failed."
-  #   exit
-  # end
+  commstr = "pdfseparate #{pdf_file}  #{File.dirname(pdf_file)+"/"+File.basename(pdf_file,".pdf")}-%d.pdf "  
   system(commstr)
 end
 
@@ -135,7 +130,7 @@ builder.declare! :DOCTYPE,:issues,:SYSTEM,"native.dtd"
 xml = builder.issues do |is|
   is.issue(:published=>"true",:identification=>"title",:current=>"false") do |issue|
     issue.title("#{tree['title']}",:locale=>"zh_CN")
-    issue.access_date("02-01-2013")
+    issue.access_date("02-01-2012")
     issue.volume("#{tree['volume']}")
     issue.number("#{tree['number']}")
     issue.year("#{tree['year']}")
@@ -152,11 +147,11 @@ xml = builder.issues do |is|
               author.lastname("#{article_yaml['author_EN']}")
               author.email("#{article_yaml['email']}"+" ")
             end
-            article_xml.date_published("02-01-2013")
+            article_xml.date_published("02-01-2012")
             article_xml.galley(:locale=>"zh_CN") do |galley|
               galley.label("PDF")
               galley.file  do |file|
-                file.href(:src=>"#{article_yaml[:filename]}",:mime_types=>"application/pdf")
+                file.href(:src=>"#{article_yaml[:filename]}",:mime_type=>"application/pdf")
               end
             end
           end
@@ -174,21 +169,21 @@ File.open(xml_file,"w") {|f| f<<xml}
 
 # 调用php，导入刊期和文章
 phpcommand = "php  /var/www/ojs/tools/importExport.php NativeImportExportPlugin import "
-phpcommand += xml_file
-phpcommand += " "+"HXLT "+" admin"
+phpcommand << xml_file
+phpcommand << " "+tree['journal_path']+" "+tree["username"]
 
 puts phpcommand
-#system(phpcommand)
+system(phpcommand)
 
 # delete all pdf files of every article
 
-# tree['sections'].each do |section|
-#   section['articles'].each do |article|   
-#    if File.exist?(article[:filename])
-#     system("rm #{article[:filename]}")
-#    end
-#   end
-# end
+tree['sections'].each do |section|
+  section['articles'].each do |article|   
+   if File.exist?(article[:filename])
+    system("rm #{article[:filename]}")
+   end
+  end
+end
 
 
 
