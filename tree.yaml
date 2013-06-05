@@ -1,0 +1,41 @@
+---
+filename: "/home/xinyue/pdfsplit/pdfsplit/bcd2.pdf"
+title: "2013年第2期"
+volume: 26
+number: 2
+year: 2013
+amend: 0 
+sections:
+  -
+    title: "马克思主义理论与实践"
+    abbrev: MKS
+    articles:
+      -
+        title: "毛泽东思想的实践特征"
+        abstract: "略"
+        author_CN: "强以华"
+        author_EN: "Qiang Yihua"
+        pages: 33-45
+      -
+       title: "坚定马克思主义信仰的路径探析"
+       abstract: "略"
+       author_CN: "曹桂芝"
+       author_EN: "Cao Guizhi"
+       pages: 45-47
+  -
+    title: "基层党的科学文化建设"
+    abbrev: DDJS
+    articles:
+      -
+        title: " 浅析基层党建创新的动力机制"
+        abstract: "略"
+        author_CN: "蔡志强，张晓文"
+        author_EN: "Cai Zhiqiang, Zhang Xiaowen"
+        pages: 33-45
+      -
+        title: "关于新社会组织党建问题的思考"
+        abstract: "略"
+        author_CN: "赵旭升"
+        author_EN: "Zhao Xusheng"
+        pages: 33-45
+
