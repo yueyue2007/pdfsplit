@@ -19,6 +19,31 @@ def clear_every_pages(pdf_file)
   system commstr
 end
 
+# 
+def pdf_unite(pdf_file,page_array,outfile) #page_array
+  if page_array[0].to_i >= page_array[1].to_i 
+    puts "begin page cannot greater than end page"
+    exit
+  end
+  commstr = "pdfunite "
+  from = page_array[0]
+  to = page_array[1]
+  base = File.dirname(pdf_file)+"/"+File.basename(pdf_file,".pdf")
+  #puts base
+  from.upto(to) do |i|
+    commstr << " #{base}-#{i}.pdf" if File.exist?("#{base}-#{i}.pdf")
+  end
+  commstr << " #{File.dirname(pdf_file)}"+"/"+"#{outfile}"
+  #puts commstr
+  if commstr.split(" ").length < 3
+    puts "   >>>>>  commstr failed"
+    puts "   >>>>>" + "  " +commstr
+    #exit
+  else
+    system(commstr)
+  end
+end
+
 
 #1. 检查参数及配置文件是否存在？
 usage  = '''
@@ -39,8 +64,27 @@ begin
   tree = YAML.load_file(ARGV[0])
 rescue Exception => e
   puts "config file has errors: #{e}"
+  #exit
+end
+
+
+
+
+tmpdir  =  File.dirname(tree['filename'])
+basename = File.basename(tree['filename'],".*")
+#tmpdir += "/tmpdir"
+p tmpdir
+p basename
+
+if not File.exist?(tree['filename'].strip())
+  puts "pdf file does not exist!"
   exit
 end
+
+pages = []
+
+split_every_pages(tree['filename'].strip())
+
 
 
 puts ""
@@ -59,32 +103,29 @@ tree['sections'].each do |section|
   puts "      ========================================================="
   puts ""
   section['articles'].each do |article|
+    article['title'] = article['title'].strip()
     puts "         title:#{article['title']}"
     puts "         author:#{article['author_CN']}"
     puts "         author:#{article['author_EN']}"
-    puts "         abstract:#{article['abstract']}"
+    puts "         abstract:#{article['abstract']}"    
     puts "         pages:#{article['pages']}"
+    article[:index] = article['pages'].split("-")
+    if tree['amend'] != "0"
+      amend = tree['amend'].to_i
+      article[:index][0] = article[:index][0].to_i + amend
+      article[:index][1] = article[:index][1].to_i + amend
+    end
+    #puts article[:index]
+    article[:filename] = "#{article['title']}"+".pdf"
+    #puts article[:filename]
+    pdf_unite(tree['filename'],article[:index],article[:filename])
+    article[:filename] = File.dirname(tree['filename'])+"/"+article[:filename]
+    puts "         "+"file:"+article[:filename]
     puts "         -----------------------------"
     puts ""
   end
 end
 
-#3 将pdf文件分割成小文件
-
-tmpdir  =  File.dirname(tree['filename'])
-basename = File.basename(tree['filename'],".*")
-#tmpdir += "/tmpdir"
-p tmpdir
-p basename
-
-if not File.exist?(tree['filename'])
-  puts "pdf file does not exist!"
-  exit
-end
-
-pages = []
-
-split_every_pages(tree['filename'])
 
 
 clear_every_pages(tree['filename'])
@@ -120,7 +161,7 @@ xml = builder.issues do |is|
             article_xml.galley(:locale=>"zh_CN") do |galley|
               galley.label("PDF")
               galley.file  do |file|
-                file.href(:src=>"",:mime_types=>"application/pdf")
+                file.href(:src=>"#{article_yaml[:filename]}",:mime_types=>"application/pdf")
               end
             end
           end
@@ -136,6 +177,11 @@ File.open("comm.xml","w") {|f| f<<xml}
 
 
 # 调用php，导入刊期和文章
+
+# delete all pdf files of every article
+
+
+
 
 
 
