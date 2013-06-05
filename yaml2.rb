@@ -6,7 +6,7 @@ require 'builder'
 
 def split_every_pages(pdf_file) 
   commstr = "pdfseparate #{pdf_file}  #{File.dirname(pdf_file)+"/"+File.basename(pdf_file,".pdf")}-%d.pdf "
-  puts commstr
+  #puts commstr
   unless system commstr
     puts "pdfseparate failed."
     exit
@@ -15,7 +15,7 @@ end
 
 def clear_every_pages(pdf_file)
   commstr = "rm #{File.dirname(pdf_file)+"/"+File.basename(pdf_file,".pdf")}-*.pdf"
-  puts commstr
+  #puts commstr
   system commstr
 end
 
@@ -38,7 +38,7 @@ def pdf_unite(pdf_file,page_array,outfile) #page_array
   if commstr.split(" ").length < 3
     puts "   >>>>>  commstr failed"
     puts "   >>>>>" + "  " +commstr
-    #exit
+    return false
   else
     system(commstr)
   end
@@ -69,19 +69,10 @@ end
 
 
 
-
-tmpdir  =  File.dirname(tree['filename'])
-basename = File.basename(tree['filename'],".*")
-#tmpdir += "/tmpdir"
-p tmpdir
-p basename
-
 if not File.exist?(tree['filename'].strip())
   puts "pdf file does not exist!"
   exit
 end
-
-pages = []
 
 split_every_pages(tree['filename'].strip())
 
@@ -118,8 +109,11 @@ tree['sections'].each do |section|
     #puts article[:index]
     article[:filename] = "#{article['title']}"+".pdf"
     #puts article[:filename]
-    pdf_unite(tree['filename'],article[:index],article[:filename])
-    article[:filename] = File.dirname(tree['filename'])+"/"+article[:filename]
+    if pdf_unite(tree['filename'],article[:index],article[:filename])
+      article[:filename] = File.dirname(tree['filename'])+"/"+article[:filename]
+    else
+      article[:filename] = ""
+    end
     puts "         "+"file:"+article[:filename]
     puts "         -----------------------------"
     puts ""
@@ -173,12 +167,21 @@ end
 
 
 
-File.open("comm.xml","w") {|f| f<<xml}
+File.open(File.dirname(tree['filename'])+"/"+File.basename(tree['filename'],".pdf")+".xml","w") {|f| f<<xml}
 
 
 # 调用php，导入刊期和文章
 
 # delete all pdf files of every article
+
+# tree['sections'].each do |section|
+#   section['articles'].each do |article|   
+#    if File.exist?(article[:filename])
+#     system("rm #{article[:filename]}")
+#    end
+#   end
+# end
+
 
 
 
